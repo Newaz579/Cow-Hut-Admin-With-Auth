@@ -1,86 +1,48 @@
 import { z } from 'zod';
+import { userType } from './users.constant';
 
 const createUserZodSchema = z.object({
   body: z.object({
-    phoneNumber: z.string({
-      required_error: 'Phone Number is required',
-    }),
-    role: z.string({
-      required_error: 'Role is required',
+    role: z.enum([...userType] as [string, ...string[]], {
+      required_error: 'Role is Required',
     }),
     password: z.string({
       required_error: 'Password is required',
     }),
-    name: z.object({
-      firstName: z.string({
-        required_error: 'First Name is required',
+    seller: z.object({
+      phoneNumber: z.string({
+        required_error: 'Phone Number is Required',
       }),
-      lastName: z.string({
-        required_error: 'Last Name is required',
+      name: z.object({
+        firstName: z.string({
+          required_error: 'First Name is Required',
+        }),
+        lastName: z.string({
+          required_error: 'Last Name is Required',
+        }),
       }),
-    }),
-    address: z.string({
-      required_error: 'Address is required',
-    }),
-    budget: z.string({
-      required_error: 'Budget is required',
-    }),
-    income: z.string({
-      required_error: 'Income is required',
+      address: z.string({
+        required_error: 'Address is Required',
+      }),
+      budget: z.string({
+        required_error: 'Budget is Required',
+      }),
+      income: z.string({
+        required_error: 'Income is Required',
+      }),
     }),
   }),
 });
 
-const updateUserZodSchema = z.object({
-  body: z.object({
-    phoneNumber: z
-      .string({
-        required_error: 'Phone Number is required',
-      })
-      .optional(),
-    role: z
-      .string({
-        required_error: 'Role is required',
-      })
-      .optional(),
-    password: z
-      .string({
-        required_error: 'Password is required',
-      })
-      .optional(),
-    name: z
-      .object({
-        firstName: z
-          .string({
-            required_error: 'First Name is required',
-          })
-          .optional(),
-        lastName: z
-          .string({
-            required_error: 'Last Name is required',
-          })
-          .optional(),
-      })
-      .optional(),
-    address: z
-      .string({
-        required_error: 'Address is required',
-      })
-      .optional(),
-    budget: z
-      .string({
-        required_error: 'Budget is required',
-      })
-      .optional(),
-    income: z
-      .string({
-        required_error: 'Income is required',
-      })
-      .optional(),
-  }),
-});
+// phoneNumber: string;
+//   role: string;
+//   password: string;
+//   name: UserName;
+//   address: string;
+//   budget: string;
+//   income: string;
+
 
 export const userValidation = {
   createUserZodSchema,
-  updateUserZodSchema,
 };

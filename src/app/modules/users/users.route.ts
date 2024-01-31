@@ -5,20 +5,14 @@ import { userValidation } from './users.validation';
 
 const router = express.Router();
 
-router.patch(
-  '/:id',
-  validateRequest(userValidation.updateUserZodSchema),
-  UsersController.updateUser,
-);
-
-router.get('/', UsersController.getAllUsers);
-
-router.get('/:id', UsersController.getSingleUser);
-
 router.post(
-  '/create-user',
+  '/create-seller',
   validateRequest(userValidation.createUserZodSchema),
-  UsersController.createUser,
+  UsersController.createSeller,
 );
+
+router.post('/create-admin', UsersController.createAdmin)
+
+router.post('/create-admin',)
 
 export const UsersRoutes = router;

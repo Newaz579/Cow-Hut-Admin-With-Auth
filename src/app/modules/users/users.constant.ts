@@ -1,1 +1,1 @@
-export const userType = ['seller', 'buyer'];
+export const userType = ['seller', 'buyer', 'admin'];

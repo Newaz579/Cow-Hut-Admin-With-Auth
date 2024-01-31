@@ -4,24 +4,11 @@ import { IUser, UserModel } from './users.interface';
 import bcrypt from 'bcrypt';
 import config from '../../../config';
 import { userType } from './users.constant';
-
-function generateId(this: IUser) {
-  return this.phoneNumber;
-}
+import { Seller } from '../seller/seller.model';
+import { Admin } from '../admin/admin.model';
 
 export const UserSchema = new Schema<IUser, UserModel, Document>(
   {
-    id: {
-      type: String,
-      required: true,
-      unique: true,
-      default: generateId,
-    },
-    phoneNumber: {
-      type: String,
-      required: true,
-      unique: true,
-    },
     role: {
       type: String,
       required: true,
@@ -32,35 +19,14 @@ export const UserSchema = new Schema<IUser, UserModel, Document>(
       required: true,
       select: 0,
     },
-    needsPasswordChange: {
-      type: Boolean,
-      default: true,
+    seller: {
+      type: Schema.Types.ObjectId,
+      ref: Seller,
     },
-    name: {
-      required: true,
-      type: {
-        firstName: {
-          type: String,
-          required: true,
-        },
-        lastName: {
-          type: String,
-          required: true,
-        },
-      },
-    },
-    address: {
-      type: String,
-      required: true,
-    },
-    budget: {
-      type: String,
-      required: true,
-    },
-    income: {
-      type: String,
-      required: true,
-    },
+    admin: {
+      type: Schema.Types.ObjectId,
+      ref: Admin
+    }
   },
   {
     timestamps: true,
@@ -72,10 +38,7 @@ export const UserSchema = new Schema<IUser, UserModel, Document>(
 
 UserSchema.statics.isUserExist = async function (
   id: string,
-): Promise<Pick<
-  IUser,
-  'id' | 'password' | 'role' | 'needsPasswordChange'
-> | null> {
+): Promise<Pick<IUser, 'password' | 'role'> | null> {
   return await User.findOne(
     { id },
     { id: 1, password: 1, role: 1, needsPasswordChange: 1 },

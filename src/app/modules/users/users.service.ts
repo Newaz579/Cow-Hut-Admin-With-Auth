@@ -1,96 +1,88 @@
-import { SortOrder } from 'mongoose';
+// import { SortOrder } from 'mongoose';
+import mongoose from 'mongoose';
 import ApiError from '../../../errors/ApiError';
-import { IGenericResponse } from '../../../interfaces/common';
-import { IPaginationOptions } from '../../../interfaces/pagination';
-import { paginationHelpers } from '../Helpers/paginationHelpers';
-import {
-  IUser,
-  IUserFilterableFilters,
-  userSearchableFields,
-} from './users.interface';
+import { ISeller } from '../seller/seller.interface';
+// import { IGenericResponse } from '../../../interfaces/common';
+// import { IPaginationOptions } from '../../../interfaces/pagination';
+// import { paginationHelpers } from '../Helpers/paginationHelpers';
+import { IUser } from './users.interface'; //IUserFilterableFilters,userSearchableFields,
 import { User } from './users.model';
+import { Seller } from '../seller/seller.model';
+import httpStatus from 'http-status';
+import { IAdmin } from '../admin/admin.interface';
+import { Admin } from '../admin/admin.model';
 
-const createUser = async (payload: IUser): Promise<IUser | null> => {
-  //create user
-  const result = await User.create(payload);
-
-  //check create user
-  if (!result) {
-    throw new ApiError(400, 'Failed to create user');
-  }
-  return result;
-};
-
-const getAllUsers = async (
-  filters: IUserFilterableFilters,
-  paginationOptions: IPaginationOptions,
-): Promise<IGenericResponse<IUser[]>> => {
-  const { searchTerm, ...filtersData } = filters;
-  const andConditions = [];
-  if (searchTerm) {
-    andConditions.push({
-      $or: userSearchableFields.map(field => ({
-        [field]: {
-          $regex: searchTerm,
-          $options: 'i',
-        },
-      })),
-    });
-  }
-
-  if (Object.keys(filtersData).length) {
-    andConditions.push({
-      $and: Object.entries(filtersData).map(([field, value]) => ({
-        [field]: value,
-      })),
-    });
-  }
-
-  const { page, limit, skip, sortBy, sortOrder, budget, location } =
-    paginationHelpers.calculatePagination(paginationOptions);
-  const sortConditions: { [key: string]: SortOrder } = {};
-  if (sortBy && sortOrder) {
-    sortConditions[sortBy] = sortOrder;
-  }
-  const whereConditions =
-    andConditions.length > 0 ? { $and: andConditions } : {};
-
-  const result = await User.find(whereConditions)
-    .sort(sortConditions)
-    .skip(skip)
-    .limit(limit);
-  const total = await User.countDocuments();
-
-  return {
-    meta: {
-      page,
-      limit,
-      total,
-      budget,
-      location,
-    },
-    data: result,
-  };
-};
-
-const getSingleUser = async (id: string): Promise<IUser | null> => {
-  const result = await User.findOne({ id });
-  return result;
-};
-
-const updateUser = async (
-  id: string,
-  payload: Partial<IUser>,
+const createSeller = async (
+  seller: ISeller,
+  user: IUser,
 ): Promise<IUser | null> => {
-  const result = await User.findOneAndUpdate({ id: id }, payload, {
-    new: true,
-  });
-  return result;
+  let newUserAllData = null;
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    //array
+    const newSeller = await Seller.create([seller], { session });
+    if (!newSeller.length) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Failed to create Seller');
+    }
+    //set seller _id into user.seller
+    user.seller = newSeller[0]._id;
+
+    const newUser = await User.create([user], { session });
+    if (!newUser.length) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Failed to create user');
+    }
+    newUserAllData = newUser[0];
+    await session.commitTransaction();
+    await session.endSession();
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw error;
+  }
+  if (newUserAllData) {
+    newUserAllData = await User.findById(newUserAllData._id).populate('seller');
+  }
+  return newUserAllData;
+};
+
+const createAdmin = async (
+  admin: IAdmin,
+  user: IUser,
+): Promise<IUser | null> => {
+  let newUserAllData = null;
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    //array
+    const newAdmin = await Admin.create([admin], { session });
+    if (!newAdmin.length) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Failed to Create Admin');
+    }
+    //set admin _id into user.seller
+    user.admin = newAdmin[0]._id;
+
+    const newUser = await User.create([user], { session });
+    if (!newUser.length) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Failed to Create new User');
+    }
+    newUserAllData = newUser[0];
+    await session.commitTransaction();
+    await session.endSession();
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw error;
+  }
+
+  if (newUserAllData) {
+    newUserAllData = await User.findById(newUserAllData._id).populate('admin');
+  }
+
+  return newUserAllData;
 };
 
 export const UsersService = {
-  createUser,
-  getAllUsers,
-  getSingleUser,
-  updateUser,
+  createSeller,
+  createAdmin,
 };

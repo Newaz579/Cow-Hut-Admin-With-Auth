@@ -5,26 +5,29 @@ export type UserName = {
   lastName: string;
 };
 
-export type IAdmin = {
+export type ISeller = {
   phoneNumber: string;
   name: UserName;
   address: string;
+  budget: string;
+  income: string;
 };
 
-export type AdminModel = Model<IAdmin, Record<string, unknown>>;
+export type SellerModel = Model<ISeller, Record<string, unknown>>;
 
-export type IAdminFilterableFilters = {
+
+export type ISellerFilterableFilters = {
   searchTerm?: string;
   role?: string;
   phoneNumber?: string;
   budget?: string;
 };
 
-export const adminFilterableFields = [
+export const sellerFilterableFields = [
   'searchTerm',
   'role',
   'phoneNumber',
   'budget',
 ];
 
-export const adminSearchableFields = ['role', 'phoneNumber', 'budget'];
+export const sellerSearchableFields = ['role', 'phoneNumber', 'budget'];

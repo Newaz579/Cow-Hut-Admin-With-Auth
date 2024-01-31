@@ -1,26 +1,18 @@
-import { Model } from 'mongoose';
-
-export type UserName = {
-  firstName: string;
-  lastName: string;
-};
-
+import { Model, Types } from 'mongoose';
+import { ISeller } from '../seller/seller.interface';
+import { IAdmin } from '../admin/admin.interface';
 export type IUser = {
-  id: string;
-  phoneNumber: string;  
   role: string;
   password: string;
-  needsPasswordChange: true | false;
-  name: UserName;
-  address: string;
-  budget: string;
-  income: string;
-} & Document;
+  seller?: Types.ObjectId | ISeller;
+  admin?: Types.ObjectId | IAdmin;
+};
+
 
 export type UserModel = {
   isUserExist(
     id: string,
-  ): Promise<Pick<IUser, 'id' | 'password' | 'role' | 'needsPasswordChange'>>;
+  ): Promise<Pick<IUser, 'password' | 'role'>>;
   isPasswordMatched(
     givenPassword: string,
     savedPassword: string,
@@ -29,18 +21,4 @@ export type UserModel = {
 
 // export type UserModel = Model<IUser, Record<string, unknown>>;
 
-export type IUserFilterableFilters = {
-  searchTerm?: string;
-  role?: string;
-  phoneNumber?: string;
-  budget?: string;
-};
 
-export const userFilterableFields = [
-  'searchTerm',
-  'role',
-  'phoneNumber',
-  'budget',
-];
-
-export const userSearchableFields = ['role', 'phoneNumber', 'budget'];
