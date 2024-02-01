@@ -7,12 +7,20 @@ const router = express.Router();
 
 router.post(
   '/create-seller',
-  validateRequest(userValidation.createUserZodSchema),
+  validateRequest(userValidation.createSellerUserZodSchema),
   UsersController.createSeller,
 );
 
-router.post('/create-admin', UsersController.createAdmin)
+router.post(
+  '/create-admin',
+  validateRequest(userValidation.createAdminUserZodSchema),
+  UsersController.createAdmin,
+);
 
-router.post('/create-admin',)
+router.post(
+  '/create-buyer',
+  validateRequest(userValidation.createBuyerUserZodSchema),
+  UsersController.createBuyer,
+);
 
 export const UsersRoutes = router;

@@ -6,6 +6,7 @@ import config from '../../../config';
 import { userType } from './users.constant';
 import { Seller } from '../seller/seller.model';
 import { Admin } from '../admin/admin.model';
+import { Buyer } from '../buyer/buyer.model';
 
 export const UserSchema = new Schema<IUser, UserModel, Document>(
   {
@@ -25,8 +26,12 @@ export const UserSchema = new Schema<IUser, UserModel, Document>(
     },
     admin: {
       type: Schema.Types.ObjectId,
-      ref: Admin
-    }
+      ref: Admin,
+    },
+    buyer: {
+      type: Schema.Types.ObjectId,
+      ref: Buyer,
+    },
   },
   {
     timestamps: true,

@@ -5,6 +5,7 @@ import { OrderRoutes } from '../modules/order/order.route';
 import { AuthRoutes } from '../modules/auth/auth.route';
 import { AdminRoutes } from '../modules/admin/admin.route';
 import { SellerRoute } from '../modules/seller/seller.route';
+import { BuyerRoute } from '../modules/buyer/buyer.route';
 const router = express.Router();
 
 const moduleRoutes = [
@@ -13,8 +14,16 @@ const moduleRoutes = [
     route: UsersRoutes,
   },
   {
+    path: '/admin',
+    route: AdminRoutes,
+  },
+  {
     path: '/seller',
     route: SellerRoute,
+  },
+  {
+    path: '/buyer',
+    route: BuyerRoute,
   },
   {
     path: '/cow',
@@ -28,10 +37,7 @@ const moduleRoutes = [
     path: '/auth',
     route: AuthRoutes,
   },
-  {
-    path: '/admin',
-    route: AdminRoutes,
-  },
+  
 ];
 
 moduleRoutes.forEach(route => {

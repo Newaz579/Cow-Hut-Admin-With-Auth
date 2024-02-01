@@ -3,9 +3,7 @@ import { UsersService } from './users.service';
 import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import httpStatus from 'http-status';
-import { IUser, } from './users.interface'; //userFilterableFields
-// import pick from '../../../shared/pick';
-// import { paginationFields } from '../constants/paginationFields';
+import { IUser } from './users.interface';
 
 const createSeller = catchAsync(async (req: Request, res: Response) => {
   const { seller, ...userData } = req.body;
@@ -19,18 +17,31 @@ const createSeller = catchAsync(async (req: Request, res: Response) => {
 });
 
 const createAdmin = catchAsync(async (req: Request, res: Response) => {
-  const {admin, ...userData} = req.body;
+  const { admin, ...userData } = req.body;
   const result = await UsersService.createAdmin(admin, userData);
 
   sendResponse<IUser>(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Admin User Created Successfully',
-    data: result
-  })
-})
+    data: result,
+  });
+});
+
+const createBuyer = catchAsync(async (req: Request, res: Response) => {
+  const { buyer, ...userData } = req.body;
+  const result = await UsersService.createBuyer(buyer, userData);
+
+  sendResponse<IUser>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Buyer User Created Successfully',
+    data: result,
+  });
+});
 
 export const UsersController = {
   createSeller,
-  createAdmin
+  createAdmin,
+  createBuyer,
 };

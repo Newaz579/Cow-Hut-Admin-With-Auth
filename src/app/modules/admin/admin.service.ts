@@ -81,23 +81,23 @@ const updateAdmin = async (
   
   const deleteAdmin = async (_id: string): Promise<IAdmin | null> => {
     //check if the seller is exist
-    const isSellerExist = await Admin.findById({ _id });
-    if (!isSellerExist) {
+    const isAdminExist = await Admin.findById({ _id });
+    if (!isAdminExist) {
       throw new ApiError(httpStatus.BAD_REQUEST, 'Admin is not found');
     }
     const session = await mongoose.startSession();
     try{
       session.startTransaction();
       //delete seller first
-      const seller = await Admin.findByIdAndDelete({_id}, {session});
-      if(!seller){
+      const admin = await Admin.findByIdAndDelete({_id}, {session});
+      if(!admin){
         throw new ApiError(httpStatus.BAD_REQUEST, 'Admin Not Found');
       }
       //delete User
       await User.deleteOne({_id});
       session.commitTransaction();
       session.endSession();
-      return seller
+      return admin
     }catch(error){
       session.abortTransaction();
       session.endSession();

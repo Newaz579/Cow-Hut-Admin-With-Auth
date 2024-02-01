@@ -16,6 +16,7 @@ router.patch(
   CowController.updateCow,
 );
 router.get('/', CowController.getAllCow);
+
 router.get('/:id', CowController.getSingleCow);
 
 export const CowRoutes = router;
