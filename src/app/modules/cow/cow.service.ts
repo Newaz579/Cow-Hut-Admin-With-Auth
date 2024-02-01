@@ -7,7 +7,6 @@ import { Cow } from './cow.model';
 
 const createCow = async (payload: ICow): Promise<ICow | null> => {
   const result = (await Cow.create(payload)).populate('seller');
-
   return result;
 };
 
@@ -66,16 +65,16 @@ const getAllCow = async (
   };
 };
 
-const getSingleCow = async (id: string): Promise<ICow | null> => {
-  const result = await Cow.findOne({id}).populate('seller');
+const getSingleCow = async (_id: string): Promise<ICow | null> => {
+  const result = await Cow.findById({ _id }).populate('seller');
   return result;
 };
 
 const updateCow = async (
-  id: string,
+  _id: string,
   payload: Partial<ICow>,
 ): Promise<ICow | null> => {
-  const result = await Cow.findOneAndUpdate({ id: id }, payload, {
+  const result = await Cow.findByIdAndUpdate({ _id }, payload, {
     new: true,
   }).populate('seller');
   return result;

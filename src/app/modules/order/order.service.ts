@@ -4,9 +4,10 @@ import { IUser } from '../users/users.interface';
 import { IOrder } from './order.interface';
 import { Order } from './order.model';
 import { Cow } from '../cow/cow.model';
-import { User } from '../users/users.model';
 import ApiError from '../../../errors/ApiError';
 import httpStatus from 'http-status';
+import { Buyer } from '../buyer/buyer.model';
+import { Seller } from '../seller/seller.model';
 
 const createOrder = async (cow: ICow, buyer: IUser): Promise<IOrder | null> => {
   let newOrderAllData = null;
@@ -14,8 +15,8 @@ const createOrder = async (cow: ICow, buyer: IUser): Promise<IOrder | null> => {
   try {
     session.startTransaction();
     const existingCow = await Cow.findById(cow);
-    const existingBuyer = await User.findById(buyer);
-    const cowSellerUser = await User.findById(existingCow?.seller);
+    const existingBuyer = await Buyer.findById(buyer);
+    const cowSellerUser = await Seller.findById(existingCow?.seller);
     const buyerBudget = Number(existingBuyer?.budget);
     const cowPrice = Number(existingCow?.price);
     const cowSellerIncome = Number(cowSellerUser?.income);
@@ -51,7 +52,7 @@ const createOrder = async (cow: ICow, buyer: IUser): Promise<IOrder | null> => {
     throw error;
   }
   if (newOrderAllData) {
-    newOrderAllData = await Order.findById(newOrderAllData.id)
+    newOrderAllData = await Order.findById(newOrderAllData._id)
       .populate('cow')
       .populate('buyer');
   }
