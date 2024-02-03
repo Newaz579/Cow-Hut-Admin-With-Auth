@@ -10,6 +10,11 @@ import { Buyer } from '../buyer/buyer.model';
 
 export const UserSchema = new Schema<IUser, UserModel, Document>(
   {
+    phoneNumber: {
+      type: String,
+      required: true,
+      unique: true
+    },
     role: {
       type: String,
       required: true,
@@ -42,12 +47,9 @@ export const UserSchema = new Schema<IUser, UserModel, Document>(
 );
 
 UserSchema.statics.isUserExist = async function (
-  id: string,
-): Promise<Pick<IUser, 'password' | 'role'> | null> {
-  return await User.findOne(
-    { id },
-    { id: 1, password: 1, role: 1, needsPasswordChange: 1 },
-  );
+  phoneNumber: string,
+): Promise<Pick<IUser, 'phoneNumber' | 'password' | 'role'> | null> {
+  return await User.findOne({ phoneNumber }, { phoneNumber: 1, password: 1, role: 1 });
 };
 
 UserSchema.statics.isPasswordMatched = async function (

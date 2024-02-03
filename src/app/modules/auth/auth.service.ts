@@ -7,9 +7,10 @@ import { JwtHelpers } from '../Helpers/jwtHelpers';
 import config from '../../../config';
 
 const logInUser = async (payload: ILogInUser) => {
-  const { id, password } = payload;
+  const { phoneNumber, password } = payload;
   //check user exist
-  const isUserExist = await User.isUserExist(id);
+
+  const isUserExist = await User.isUserExist(phoneNumber);
   if (!isUserExist) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'User does Not Exist');
   }
@@ -20,7 +21,7 @@ const logInUser = async (payload: ILogInUser) => {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Password is Incorrect');
   }
 
-  const { id: userId, role, needsPasswordChange } = isUserExist;
+  const { phoneNumber: userId, role } = isUserExist;
 
   //generate Access Token
   const accessToken = JwtHelpers.createToken(
@@ -39,7 +40,6 @@ const logInUser = async (payload: ILogInUser) => {
   return {
     accessToken,
     refreshToken,
-    needsPasswordChange,
   };
 };
 
@@ -57,7 +57,7 @@ const refreshToken = async (token: string): Promise<IRefreshTokenAccess> => {
     throw new ApiError(httpStatus.NOT_FOUND, 'User Does Not Exist');
   }
   //generate new Access Token
-  const newAccessToken = JwtHelpers.createToken({id: isUserExist.id, role: isUserExist.role}, config.jwt.secret as Secret, config.jwt.expires_in as string);
+  const newAccessToken = JwtHelpers.createToken({id: isUserExist.phoneNumber, role: isUserExist.role}, config.jwt.secret as Secret, config.jwt.expires_in as string);
   return {
     accessToken: newAccessToken
   }

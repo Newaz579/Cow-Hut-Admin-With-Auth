@@ -6,7 +6,6 @@ export type UserName = {
 };
 
 export type IAdmin = {
-  phoneNumber: string;
   name: UserName;
   address: string;
 };

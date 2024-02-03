@@ -1,11 +1,6 @@
 import { z } from 'zod';
 const updateAdminZodSchema = z.object({
   body: z.object({
-    phoneNumber: z
-      .string({
-        required_error: 'Phone Number is Required',
-      })
-      .optional(),
     name: z
       .object({
         firstName: z

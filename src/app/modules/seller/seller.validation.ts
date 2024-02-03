@@ -2,11 +2,6 @@ import { z } from 'zod';
 
 const updateSellerZodSchema = z.object({
   body: z.object({
-    phoneNumber: z
-      .string({
-        required_error: 'Phone Number is required',
-      })
-      .optional(),
     name: z
       .object({
         firstName: z

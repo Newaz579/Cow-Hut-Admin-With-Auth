@@ -3,11 +3,6 @@ import { ISeller, SellerModel } from './seller.interface';
 
 export const SellerSchema = new Schema<ISeller, SellerModel>(
   {
-    phoneNumber: {
-      type: String,
-      required: true,
-      unique: true,
-    },
     name: {
       firstName: {
         type: String,

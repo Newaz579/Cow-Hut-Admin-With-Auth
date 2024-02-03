@@ -6,7 +6,6 @@ export type UserName = {
 };
 
 export type ISeller = {
-  phoneNumber: string;
   name: UserName;
   address: string;
   budget: string;

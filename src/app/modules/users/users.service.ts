@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
+import mongoose, { SortOrder } from 'mongoose';
 import ApiError from '../../../errors/ApiError';
 import { ISeller } from '../seller/seller.interface';
-import { IUser } from './users.interface';
+import { IUser, IUserFilterableFilters, userSearchableFields } from './users.interface';
 import { User } from './users.model';
 import { Seller } from '../seller/seller.model';
 import httpStatus from 'http-status';
@@ -9,6 +9,9 @@ import { IAdmin } from '../admin/admin.interface';
 import { Admin } from '../admin/admin.model';
 import { IBuyer } from '../buyer/buyer.interface';
 import { Buyer } from '../buyer/buyer.model';
+import { IPaginationOptions } from '../../../interfaces/pagination';
+import { IGenericResponse } from '../../../interfaces/common';
+import { paginationHelpers } from '../Helpers/paginationHelpers';
 
 const createSeller = async (
   seller: ISeller,
@@ -126,8 +129,80 @@ const createBuyer = async (
   return newUserAllData;
 };
 
+const getAllUsers = async (
+  filters: IUserFilterableFilters,
+  paginationOptions: IPaginationOptions,
+): Promise<IGenericResponse<IUser[]>> => {
+  const { searchTerm, ...filtersData } = filters;
+  const andConditions = [];
+  if (searchTerm) {
+    andConditions.push({
+      $or: userSearchableFields.map(field => ({
+        [field]: {
+          $regex: searchTerm,
+          $options: 'i',
+        },
+      })),
+    });
+  }
+
+  if (Object.keys(filtersData).length) {
+    andConditions.push({
+      $and: Object.entries(filtersData).map(([field, value]) => ({
+        [field]: value,
+      })),
+    });
+  }
+
+  const { page, limit, skip, sortBy, sortOrder, budget, location } =
+    paginationHelpers.calculatePagination(paginationOptions);
+  const sortConditions: { [key: string]: SortOrder } = {};
+  if (sortBy && sortOrder) {
+    sortConditions[sortBy] = sortOrder;
+  }
+  const whereConditions =
+    andConditions.length > 0 ? { $and: andConditions } : {};
+
+  const result = await User.find(whereConditions)
+    .sort(sortConditions)
+    .skip(skip)
+    .limit(limit);
+  const total = await User.countDocuments();
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+      budget,
+      location,
+    },
+    data: result,
+  };
+};
+
+const getSingleUser = async (id: string): Promise<IUser | null> => {
+  const result = await User.findById(id);
+  return result;
+};
+
+const updateUser = async (
+  _id: string,
+  payload: Partial<IUser>,
+): Promise<IUser | null> => {
+  const result = await User.findByIdAndUpdate({ _id }, payload, {
+    new: true,
+  });
+  return result;
+};
+
+
+
 export const UsersService = {
   createSeller,
   createAdmin,
   createBuyer,
+  getAllUsers,
+  getSingleUser,
+  updateUser
 };

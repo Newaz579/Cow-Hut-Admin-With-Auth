@@ -3,11 +3,6 @@ import { AdminModel, IAdmin } from './admin.interface';
 
 export const AdminSchema = new Schema<IAdmin, AdminModel>(
   {
-    phoneNumber: {
-      type: String,
-      required: true,
-      unique: true,
-    },
     name: {
       firstName: {
         type: String,

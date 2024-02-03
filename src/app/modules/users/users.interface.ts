@@ -3,6 +3,7 @@ import { ISeller } from '../seller/seller.interface';
 import { IAdmin } from '../admin/admin.interface';
 import { IBuyer } from '../buyer/buyer.interface';
 export type IUser = {
+  phoneNumber: string;
   role: string;
   password: string;
   seller?: Types.ObjectId | ISeller;
@@ -11,7 +12,9 @@ export type IUser = {
 };
 
 export type UserModel = {
-  isUserExist(id: string): Promise<Pick<IUser, 'password' | 'role'>>;
+  isUserExist(
+    phoneNumber: string,
+  ): Promise<Pick<IUser, 'phoneNumber' | 'password' | 'role'>>;
   isPasswordMatched(
     givenPassword: string,
     savedPassword: string,
@@ -19,3 +22,17 @@ export type UserModel = {
 } & Model<IUser, Document>;
 
 // export type UserModel = Model<IUser, Record<string, unknown>>;
+
+export type IUserFilterableFilters = {
+  searchTerm?: string;
+  role?: string;
+  phoneNumber?: string;
+};
+
+export const userFilterableFields = [
+  'searchTerm',
+  'role',
+  'phoneNumber',
+];
+
+export const userSearchableFields = ['role', 'phoneNumber'];

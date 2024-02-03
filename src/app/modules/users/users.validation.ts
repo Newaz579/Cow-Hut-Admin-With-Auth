@@ -3,6 +3,9 @@ import { userType } from './users.constant';
 
 const createSellerUserZodSchema = z.object({
   body: z.object({
+    phoneNumber: z.string({
+      required_error: 'Phone Number is Required'
+    }),
     role: z.enum([...userType] as [string, ...string[]], {
       required_error: 'Role is Required',
     }),
@@ -10,9 +13,6 @@ const createSellerUserZodSchema = z.object({
       required_error: 'Password is required',
     }),
     seller: z.object({
-      phoneNumber: z.string({
-        required_error: 'Phone Number is Required',
-      }),
       name: z.object({
         firstName: z.string({
           required_error: 'First Name is Required',
@@ -36,6 +36,9 @@ const createSellerUserZodSchema = z.object({
 
 const createAdminUserZodSchema = z.object({
   body: z.object({
+    phoneNumber: z.string({
+      required_error: 'Phone Number is Required'
+    }),
     role: z.enum([...userType] as [string, ...string[]], {
       required_error: 'Role is Required',
     }),
@@ -43,9 +46,6 @@ const createAdminUserZodSchema = z.object({
       required_error: 'Password is required',
     }),
     admin: z.object({
-      phoneNumber: z.string({
-        required_error: 'Phone Number is Required',
-      }),
       name: z.object({
         firstName: z.string({
           required_error: 'First Name is Required',
@@ -63,6 +63,9 @@ const createAdminUserZodSchema = z.object({
 
 const createBuyerUserZodSchema = z.object({
   body: z.object({
+    phoneNumber: z.string({
+      required_error: 'Phone Number is Required'
+    }),
     role: z.enum([...userType] as [string, ...string[]], {
       required_error: 'Role is Required',
     }),
@@ -70,9 +73,6 @@ const createBuyerUserZodSchema = z.object({
       required_error: 'Password is required',
     }),
     buyer: z.object({
-      phoneNumber: z.string({
-        required_error: 'Phone Number is Required',
-      }),
       name: z.object({
         firstName: z.string({
           required_error: 'First Name is Required',
